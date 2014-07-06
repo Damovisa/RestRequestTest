@@ -1,0 +1,83 @@
+﻿@using Nancy
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<RestTest.Modules.ResultsViewModel>
+@{
+    Layout = "_Layout.cshtml";
+    ViewBag.Title = "Requests for " + Model.Key;
+}
+<style>
+    pre {
+        padding: 5px;
+        margin: 5px;
+        border: none;
+        background-color: #eee;
+    }
+
+    .request {
+        border: 1px solid #444;
+        margin: 20px 5px;
+        padding: 0;
+        border-radius: 5px;
+    }
+
+    .request-heading {
+        background-color: #5bc0de;
+        display: block;
+        min-height: 2em;
+        padding: 5px;
+        margin: 0 0 5px 0;
+        border-radius: 5px 5px 0 0;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .request-body {
+        clear: both;
+        padding: 5px 10px;
+    }
+
+    .field-title {
+        font-weight: bold;
+        margin-right: 10px;
+        color: black;
+    }
+    .collapsible { cursor:pointer;}
+</style>
+
+<h1>@ViewBag.Title</h1>
+@foreach (var result in Model.Results)
+{
+    var rowkey = result.RowKey.Substring(1, 17);
+    var verbLabel = "label-default";
+    switch (result.Verb)
+    {
+        case "POST":
+            verbLabel = "label-warning";
+            break;
+        case "GET":
+            verbLabel = "label-success";
+            break;
+        case "DELETE":
+            verbLabel = "label-danger";
+            break;
+        case "PUT":
+            verbLabel = "label-primary";
+            break;
+    }
+    <div class="request">
+        <div class="request-heading">
+            <span class="label @verbLabel">@result.Verb</span>
+            @result.RequestTime
+        </div>
+        <div class="request-body">
+            <div class="header">
+                <a class="field-title collapsible" data-toggle="collapse" data-target="#header-@rowkey">Header &hellip;</a>
+                <pre class="collapse" id="header-@rowkey">@result.Header</pre>
+            </div>
+            <div class="body"><div class="field-title">Body</div><pre class="prettyprint">@result.Body</pre></div>
+        </div>
+    </div>
+}
+
+<script src="~/Content/Scripts/jquery-1.9.0.min.js"></script>
+<script src="~/Content/Scripts/bootstrap.min.js"></script>
+<script src="//google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
